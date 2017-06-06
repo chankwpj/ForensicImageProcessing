@@ -29,6 +29,9 @@ class SkinDetection:
         self.erodeKernel = np.ones((13,13),np.uint8)
         self.iterations = 2
    
+        self.closing = True;
+        self.fill = True;
+
     def setHSVBounds(self, lower_boundHSV, upper_boundHSV):
         self.lower_boundHSV = lower_boundHSV
         self.upper_boundHSV = upper_boundHSV
@@ -50,29 +53,35 @@ class SkinDetection:
             cv2.drawContours(mask,[cnt],0,255,-1)
         return mask
     
+    def setClosing(bool):
+        self.closing = bool;
+        
+    def setFill(bool):
+        self.fill = bool;
 
     def MorphoClosing(self, mask):
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, self.kernel)
         return mask
 
+    def mask(self, im):
+        mask, _, _ = self.SkinThresholding(im);
+        return mask;
 
-    def SkinThresholding(self, im, closing, fill):
+
+    def SkinThresholding(self, im):
         #thresholding HSV space
         maskHSV = cv2.inRange(cv2.cvtColor(im, cv2.COLOR_BGR2HSV), self.lower_boundHSV, self.upper_boundHSV)
         #thresholding YCC space
         maskYCC = cv2.inRange(cv2.cvtColor(im, cv2.COLOR_BGR2YCR_CB), self.lower_boundYCC, self.upper_boundYCC)
         
-        if (closing == True):
+        if (self.closing == True):
             maskHSV = self.MorphoClosing(maskHSV)
             maskYCC = self.MorphoClosing(maskYCC)
 
-        if (fill == True):
+        if (self.fill == True):
             maskHSV = self.FillHoles(maskHSV)
             maskYCC = self.FillHoles(maskYCC)
         
-        #IO.ImageWrite(maskHSV, "maskHSV", ".jpg")
-        #IO.ImageWrite(maskYCC, "maskYCC", ".jpg")
-
         #combine result
         mask = cv2.bitwise_and(maskHSV, maskYCC)
         if (self.iterations > 0):

@@ -3,6 +3,7 @@ import cv2
 import cv2.cv as cv
 from sympy import Point
 import math
+from NoiseRemoval import *
 
 class BruiseWindow:
     """description of class"""
@@ -13,6 +14,7 @@ class BruiseWindow:
         self.kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7))
         self.iteration = 5
         self.houghCirclesParameters = [cv.CV_HOUGH_GRADIENT,1,250, 90,20,120,440];
+        self.noiseRemoval = NoiseRemoval();
 
     def setColourThresholdingBound(self, lower, upper):
         self.lower = lower
@@ -24,6 +26,9 @@ class BruiseWindow:
     
     def setHoughCirclesParameters(self, parameters):
         self.houghCirclesParameters = parameters
+    
+    def setNoiseRemoval(self, obj):
+        self.noiseRemoval = obj
 
     def extractRuler(self, im):
         rulerMask = cv2.inRange(im, self.lower, self.upper)
@@ -161,6 +166,15 @@ class BruiseWindow:
                 minDist = dist
 
         return cloestPt
+
+    def mask(self, im):
+        maskWindow, _, _, _ = self.getWindowMask(im);
+        maskClearRuler = self.removeRulerInWindow(cv2.bitwise_and(im,im, mask=maskWindow))
+        mask = cv2.bitwise_and(maskWindow, maskClearRuler)
+        if (self.noiseRemoval is not None):
+            maskNoiseRemoval = self.noiseRemoval.mask(cv2.bitwise_and(im,im, mask=mask))
+            mask = cv2.bitwise_and(maskNoiseRemoval, mask)
+        return mask;
 
     def getWindowMask(self, im):
         rulerMask = self.extractRuler(im)
