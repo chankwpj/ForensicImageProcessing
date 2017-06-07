@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
+from Worker import *
 
-class NoiseRemoval:
+class NoiseRemoval(Worker):
     
     def __init__(self):
         self.purpleDotLower = np.array([100, 70, 40])

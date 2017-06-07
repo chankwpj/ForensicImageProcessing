@@ -3,9 +3,10 @@ import cv2
 import cv2.cv as cv
 from sympy import Point
 import math
+from Worker import *
 from NoiseRemoval import *
 
-class BruiseWindow:
+class BruiseWindow(Worker):
     """description of class"""
 
     def __init__(self):
@@ -171,7 +172,7 @@ class BruiseWindow:
         maskWindow, _, _, _ = self.getWindowMask(im);
         maskClearRuler = self.removeRulerInWindow(cv2.bitwise_and(im,im, mask=maskWindow))
         mask = cv2.bitwise_and(maskWindow, maskClearRuler)
-        if (self.noiseRemoval is not None):
+        if ( self.noiseRemoval is not None):
             maskNoiseRemoval = self.noiseRemoval.mask(cv2.bitwise_and(im,im, mask=mask))
             mask = cv2.bitwise_and(maskNoiseRemoval, mask)
         return mask;

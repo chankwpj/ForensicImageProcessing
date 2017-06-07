@@ -1,34 +1,17 @@
 import cv2
 import numpy as np
+from Worker import *
 
-class SkinDetection:
-    def __init__(self, lower_boundHSV=None, upper_boundHSV=None, lower_boundYCC=None, upper_boundYCC=None):
-        if lower_boundHSV!=None: 
-            self.lower_boundHSV = lower_boundHSV
-        else:
-            self.lower_boundHSV = np.array([0, 10, 60])
-
-        if upper_boundHSV!=None:
-            self.upper_boundHSV = upper_boundHSV
-        else:
-            self.upper_boundHSV = np.array([20, 150, 255])
-        
-        if lower_boundYCC!=None:
-            self.lower_boundYCC = lower_boundYCC
-        else:
-            self.lower_boundYCC = np.array([0,133,77])
-             
-        if upper_boundYCC!=None:
-            self.upper_boundYCC = upper_boundYCC 
-        else:
-            self.upper_boundYCC = np.array([255,173,127])
-
+class SkinDetection(Worker):
+    def __init__(self):
+        self.lower_boundHSV = np.array([0, 10, 60])
+        self.upper_boundHSV = np.array([20, 150, 255])
+        self.lower_boundYCC = np.array([0,133,77])
+        self.upper_boundYCC = np.array([255,173,127])
         self.kSize = 22
         self.kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(self.kSize,self.kSize))
-
         self.erodeKernel = np.ones((13,13),np.uint8)
         self.iterations = 2
-   
         self.closing = True;
         self.fill = True;
 
@@ -47,22 +30,23 @@ class SkinDetection:
         self.erodeKernel = kernel
         self.iterations = iteration
 
-    def FillHoles(self, mask):
-        contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE)
-        for h,cnt in enumerate(contours):
-            cv2.drawContours(mask,[cnt],0,255,-1)
-        return mask
-    
     def setClosing(bool):
         self.closing = bool;
         
     def setFill(bool):
         self.fill = bool;
 
+    def FillHoles(self, mask):
+        contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE)
+        for h,cnt in enumerate(contours):
+            cv2.drawContours(mask,[cnt],0,255,-1)
+        return mask
+    
     def MorphoClosing(self, mask):
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, self.kernel)
         return mask
 
+    #implmentation of abstract methods
     def mask(self, im):
         mask, _, _ = self.SkinThresholding(im);
         return mask;

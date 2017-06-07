@@ -2,7 +2,6 @@ import glob
 import numpy as np
 import cv2
 import MyIO as IO
-import SkinDetection
 from SkinDetection import SkinDetection
 
 '''
@@ -19,5 +18,6 @@ skinDetection = SkinDetection();
 for index, path in enumerate(imagePath):
     imgName = "Img" + str(index) 
     im = cv2.imread(path)
-    mask, m1, m2 = skinDetection.SkinThresholding(im, True, True)
+    #mask, m1, m2 = skinDetection.SkinThresholding(im, True, True)
+    mask = skinDetection.mask(im)
     IO.ImageWrite(im, imgName, ".jpg", mask=mask)
