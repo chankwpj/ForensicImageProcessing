@@ -4,6 +4,9 @@ import numpy as np
 
 class MeasurmentTool():
     
+    #given a mask, then return the rotated min perimeter bounding box
+    #first return element is the contour object of opencv
+    #second return element is the rectangle object of opencv
     def measure(self, mask):
         try:
             coo = np.where(mask >= 1)

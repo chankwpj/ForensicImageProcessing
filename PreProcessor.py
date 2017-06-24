@@ -2,21 +2,19 @@ from Worker import *
 import cv2
 import numpy as np
 
-class PreProcessor(Worker):
-    """description of class"""
-    def __init__(self, workers):
-        self.workers = workers
+class PreProcessor():
 
-    def getWorkers(self):
-        return self.workers;
-
-    def setWorkers(self, workers):
-        self.workers = workers
+    def __init__(self, skinDetector, bruiseWindow):
+        self.skinDetector = skinDetector
+        self.bruiseWindow = bruiseWindow
 
     def mask(self, im):
-        res = np.ones(im.shape[0:2], dtype=np.uint8)
-        for index, worker in enumerate(self.workers):
-            mask = worker.mask(im);
-            res = cv2.bitwise_and(res, mask);
+        skinMask = self.skinDetector.mask(im)
+        windowMask, unit = self.bruiseWindow.mask(im)
+        return cv2.bitwise_and(skinMask, windowMask), unit;
 
-        return cv2.inRange(res, 1, 255);
+    def process(self, im):
+        skinMask = self.skinDetector.mask(im)
+        windowMask, unit = self.bruiseWindow.mask(im)
+        mask = cv2.bitwise_and(skinMask, windowMask)
+        return cv2.bitwise_and(im, im, mask=mask), unit;

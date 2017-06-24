@@ -3,7 +3,7 @@ import cv2
 from Worker import *
 
 class NoiseRemoval(Worker):
-    
+    #default parameters
     def __init__(self):
         self.purpleDotLower = np.array([100, 70, 40])
         self.purpleDotUpper = np.array([180, 255, 150])
@@ -12,21 +12,6 @@ class NoiseRemoval(Worker):
         self.birthMarkLower = np.array([0, 140, 40])
         self.birthMarkUpper = np.array([40, 255, 255])
     
-    def setPurpleDotRemovalParameter(self, purpleDotLower, purpleDotUpper, purpleDotKernel):
-        self.purpleDotLower = purpleDotLower
-        self.purpleDotUpper = purpleDotUpper
-        self.purpleDotKernel = purpleDotKernel
-
-    def getPurpleDotRemovalParameter(self):
-        return [self.purpleDotLower, self.purpleDotUpper, self.purpleDotKernel]
-
-    def setBirthMarkRemovalParameter(self, birthMarkLower, birthMarkUpper):
-        self.birthMarkLower = birthMarkLower
-        self.birthMarkUpper = birthMarkUpper
-
-    def getBirthMarkRemovalParameter(self):
-        return [self.birthMarkLower, self.birthMarkUpper]
-
     def RemovePurpleDot(self, imbgr):
         imhsv = cv2.cvtColor(imbgr, cv2.COLOR_BGR2HSV)
         dotMask = cv2.inRange(imhsv, self.purpleDotLower , self.purpleDotUpper )

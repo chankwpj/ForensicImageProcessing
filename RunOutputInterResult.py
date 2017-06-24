@@ -43,14 +43,14 @@ for index, path in enumerate(imagePath):
         windowMask, rulerMask, erodedMask, Tpoints, circles, unit, pt = myBruiseWindow2.getWindowMask(im)
         #preIm, mmUnit = myPreProcessor2.process(im)
     
-   
+    im = cv2.imread("./SegmentationResult/" + imgName + "out.jpg")
     rgbMask = cv2.cvtColor(erodedMask, cv2.COLOR_GRAY2BGR)
     
     #draw all circles
     for i in circles[0,:]:
         # draw the outer circle
-        cv2.circle(im,(i[0],i[1]),i[2],(255,0,0),2)
-        cv2.circle(rgbMask,(i[0],i[1]),i[2],(255,0,0),2)
+        cv2.circle(im,(i[0],i[1]),i[2],(0,255,0),5)
+        cv2.circle(rgbMask,(i[0],i[1]),i[2],(0,255,0),15)
         # draw the center of the circle
         #cv2.circle(im,(i[0],i[1]),4,(255,0,0),-1)
     #draw target points
@@ -61,8 +61,8 @@ for index, path in enumerate(imagePath):
     #indicate which circle used as convertor
     cv2.circle(im,(pt[0],pt[1]),25,(0,255,255),-1)
     cv2.circle(rgbMask,(pt[0],pt[1]),25,(0,255,255),-1)
-    cv2.imwrite(imgName + str("Window") + ".jpg", im)
-    cv2.imwrite(imgName + str("RulerMask") + ".jpg", erodedMask)
+    #cv2.imwrite(imgName + str("Window") + ".jpg", im)
+    cv2.imwrite(imgName + str("RulerMask") + ".jpg", rgbMask)
 
     '''
     getWindowMask()
